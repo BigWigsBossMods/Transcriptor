@@ -42,7 +42,7 @@ local print = print
 
 local C_Scenario, C_DeathInfo_GetSelfResurrectOptions = C_Scenario, C_DeathInfo.GetSelfResurrectOptions
 local IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease = IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease
-local IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal_GetSectionInfo, C_Map_GetMapInfo = IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal.GetSectionInfo, C_Map.GetMapInfo
+local IsAltKeyDown, C_Map_GetMapInfo = IsAltKeyDown, C_Map.GetMapInfo
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
 local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
 local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth
@@ -125,31 +125,6 @@ function GetInstanceID(name)
 		local lowerFetchedName = fetchedName:lower()
 		if find(lowerFetchedName, name, nil, true) then
 			print(fetchedName..": "..i)
-		end
-	end
-end
-function GetBossID(name)
-	name = name:lower()
-	for i=1,3000 do
-		local fetchedName = EJ_GetEncounterInfo(i)
-		if fetchedName then
-			local lowerFetchedName = fetchedName:lower()
-			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedName..": "..i)
-			end
-		end
-	end
-end
-function GetSectionID(name)
-	name = name:lower()
-	for i=1,15000 do
-		local tbl = C_EncounterJournal_GetSectionInfo(i)
-		if tbl then
-			local fetchedName = tbl.title
-			local lowerFetchedName = fetchedName:lower()
-			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedName..": "..i)
-			end
 		end
 	end
 end
@@ -998,63 +973,6 @@ do
 	end
 end
 
-function sh.SCENARIO_UPDATE(newStep)
-	--Proving Grounds
-	local ret = ""
-	if C_Scenario.GetInfo() == "Proving Grounds" then
-		local diffID, currWave, maxWave, duration = C_Scenario.GetProvingGroundsInfo()
-		ret = "currentMedal:"..diffID.." currWave: "..currWave.." maxWave: "..maxWave.." duration: "..duration
-	end
-
-	local ret2 = "#newStep#" .. tostring(newStep)
-	ret2 = ret2 .. "#Info#" .. strjoin("#", tostringall(C_Scenario.GetInfo()))
-	ret2 = ret2 .. "#StepInfo#" .. strjoin("#", tostringall(C_Scenario.GetStepInfo()))
-	if C_Scenario.GetBonusStepInfo then
-		ret2 = ret2 .. "#BonusStepInfo#" .. strjoin("#", tostringall(C_Scenario.GetBonusStepInfo()))
-	end
-
-	local ret3 = ""
-	local _, _, numCriteria = C_Scenario.GetStepInfo()
-	for i = 1, numCriteria do
-		ret3 = ret3 .. "#CriteriaInfo" .. i .. "#" .. strjoin("#", tostringall(C_Scenario.GetCriteriaInfo(i)))
-	end
-
-	local ret4 = ""
-	if C_Scenario.GetBonusStepInfo then
-		local _, _, numBonusCriteria, _ = C_Scenario.GetBonusStepInfo()
-		for i = 1, numBonusCriteria do
-			ret4 = ret4 .. "#BonusCriteriaInfo" .. i .. "#" .. strjoin("#", tostringall(C_Scenario.GetBonusCriteriaInfo(i)))
-		end
-	end
-
-	return ret .. ret2 .. ret3 .. ret4
-end
-
-function sh.SCENARIO_CRITERIA_UPDATE(criteriaID)
-	local ret = "criteriaID#" .. tostring(criteriaID)
-	ret = ret .. "#Info#" .. strjoin("#", tostringall(C_Scenario.GetInfo()))
-	ret = ret .. "#StepInfo#" .. strjoin("#", tostringall(C_Scenario.GetStepInfo()))
-	if C_Scenario.GetBonusStepInfo then
-		ret = ret .. "#BonusStepInfo#" .. strjoin("#", tostringall(C_Scenario.GetBonusStepInfo()))
-	end
-
-	local ret2 = ""
-	local _, _, numCriteria = C_Scenario.GetStepInfo()
-	for i = 1, numCriteria do
-		ret2 = ret2 .. "#CriteriaInfo" .. i .. "#" .. strjoin("#", tostringall(C_Scenario.GetCriteriaInfo(i)))
-	end
-
-	local ret3 = ""
-	if C_Scenario.GetBonusStepInfo then
-		local _, _, numBonusCriteria, _ = C_Scenario.GetBonusStepInfo()
-		for i = 1, numBonusCriteria do
-			ret3 = ret3 .. "#BonusCriteriaInfo" .. i .. "#" .. strjoin("#", tostringall(C_Scenario.GetBonusCriteriaInfo(i)))
-		end
-	end
-
-	return ret .. ret2 .. ret3
-end
-
 function sh.ZONE_CHANGED(...)
 	return strjoin("#", GetZoneText() or "?", GetRealZoneText() or "?", GetSubZoneText() or "?", ...)
 end
@@ -1186,9 +1104,6 @@ local wowEvents = {
 	"ZONE_CHANGED",
 	"ZONE_CHANGED_INDOORS",
 	"ZONE_CHANGED_NEW_AREA",
-	-- Scenarios
-	"SCENARIO_UPDATE",
-	"SCENARIO_CRITERIA_UPDATE",
 	-- Movies
 	"PLAY_MOVIE",
 	"CINEMATIC_START",
@@ -1197,7 +1112,6 @@ local wowEvents = {
 	"CHAT_MSG_BG_SYSTEM_HORDE",
 	"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 	"CHAT_MSG_BG_SYSTEM_NEUTRAL",
-	"ARENA_OPPONENT_UPDATE",
 }
 local eventCategories = {
 	PLAYER_REGEN_DISABLED = "COMBAT",
@@ -1223,15 +1137,12 @@ local eventCategories = {
 	ZONE_CHANGED = "ZONE_CHANGED",
 	ZONE_CHANGED_INDOORS = "ZONE_CHANGED",
 	ZONE_CHANGED_NEW_AREA = "ZONE_CHANGED",
-	SCENARIO_UPDATE = "SCENARIO",
-	SCENARIO_CRITERIA_UPDATE = "SCENARIO",
 	PLAY_MOVIE = "MOVIE",
 	CINEMATIC_START = "MOVIE",
 	START_TIMER = "PVP",
 	CHAT_MSG_BG_SYSTEM_HORDE = "PVP",
 	CHAT_MSG_BG_SYSTEM_ALLIANCE = "PVP",
 	CHAT_MSG_BG_SYSTEM_NEUTRAL = "PVP",
-	ARENA_OPPONENT_UPDATE = "PVP",
 	BigWigs_Message = "BigWigs",
 	BigWigs_StartBar = "BigWigs",
 	--BigWigs_Debug = "BigWigs",
