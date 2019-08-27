@@ -1,4 +1,9 @@
 
+if WOW_PROJECT_ID ~= WOW_PROJECT_CLASSIC then
+	print("|cFF33FF99TargetPercent|r: You're trying to run the Classic version of Transcriptor on a live server.")
+	return
+end
+
 local Transcriptor = {}
 
 local playerSpellBlacklist
