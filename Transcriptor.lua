@@ -1219,7 +1219,7 @@ local function insertMenuItems(tbl)
 end
 
 local init = CreateFrame("Frame")
-init:SetScript("OnEvent", function(self, event, addon)
+init:SetScript("OnEvent", function(self, event)
 	if type(TranscriptDB) ~= "table" then TranscriptDB = {} end
 	if type(TranscriptIgnore) ~= "table" then TranscriptIgnore = {} end
 	TranscriptDB.ignoredEvents = nil
@@ -1246,6 +1246,14 @@ init:SetScript("OnEvent", function(self, event, addon)
 	SLASH_TRANSCRIPTOR1 = "/transcriptor"
 	SLASH_TRANSCRIPTOR2 = "/transcript"
 	SLASH_TRANSCRIPTOR3 = "/ts"
+
+	self:UnregisterEvent(event)
+	self:RegisterEvent("PLAYER_LOGOUT")
+	self:SetScript("OnEvent", function()
+		if Transcriptor:IsLogging() then
+			Transcriptor:StopLog()
+		end
+	end)
 end)
 init:RegisterEvent("PLAYER_LOGIN")
 
