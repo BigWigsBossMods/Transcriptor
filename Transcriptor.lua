@@ -1,4 +1,9 @@
 
+if WOW_PROJECT_ID ~= WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+	print("|cFF33FF99Transcriptor|r: Wrong version installed. This version is for Burning Crusade Classic.")
+	return
+end
+
 local Transcriptor = {}
 
 local playerSpellBlacklist
