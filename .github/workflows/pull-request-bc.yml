@@ -1,4 +1,4 @@
-name: Check PR
+name: Check Classic-BC PR
 
 on: [pull_request]
 
