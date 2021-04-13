@@ -45,7 +45,7 @@ local debugprofilestop, wipe = debugprofilestop, wipe
 
 local C_Scenario, C_DeathInfo_GetSelfResurrectOptions, Enum = C_Scenario, C_DeathInfo.GetSelfResurrectOptions, Enum
 local IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease = IsEncounterInProgress, IsEncounterLimitingResurrections, IsEncounterSuppressingRelease
-local IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal_GetSectionInfo, C_Map_GetMapInfo = IsAltKeyDown, EJ_GetEncounterInfo, C_EncounterJournal.GetSectionInfo, C_Map.GetMapInfo
+local IsAltKeyDown, C_Map_GetMapInfo = IsAltKeyDown, C_Map.GetMapInfo
 local UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo = UnitInRaid, UnitInParty, UnitIsFriend, UnitCastingInfo, UnitChannelInfo
 local UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification = UnitCanAttack, UnitExists, UnitIsVisible, UnitGUID, UnitClassification
 local UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth = UnitName, UnitPower, UnitPowerMax, UnitPowerType, UnitHealth
@@ -140,31 +140,6 @@ function GetInstanceID(name)
 		local lowerFetchedName = fetchedName:lower()
 		if find(lowerFetchedName, name, nil, true) then
 			print(fetchedName..": "..i)
-		end
-	end
-end
-function GetBossID(name)
-	name = name:lower()
-	for i=1,3000 do
-		local fetchedName = EJ_GetEncounterInfo(i)
-		if fetchedName then
-			local lowerFetchedName = fetchedName:lower()
-			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedName..": "..i)
-			end
-		end
-	end
-end
-function GetSectionID(name)
-	name = name:lower()
-	for i=1,15000 do
-		local tbl = C_EncounterJournal_GetSectionInfo(i)
-		if tbl then
-			local fetchedName = tbl.title
-			local lowerFetchedName = fetchedName:lower()
-			if find(lowerFetchedName, name, nil, true) then
-				print(fetchedName..": "..i)
-			end
 		end
 	end
 end
@@ -1255,8 +1230,8 @@ local wowEvents = {
 	"ZONE_CHANGED_INDOORS",
 	"ZONE_CHANGED_NEW_AREA",
 	-- Scenarios
-	"SCENARIO_UPDATE",
-	"SCENARIO_CRITERIA_UPDATE",
+	--"SCENARIO_UPDATE",
+	--"SCENARIO_CRITERIA_UPDATE",
 	-- Movies
 	"PLAY_MOVIE",
 	"CINEMATIC_START",
@@ -1265,7 +1240,7 @@ local wowEvents = {
 	"CHAT_MSG_BG_SYSTEM_HORDE",
 	"CHAT_MSG_BG_SYSTEM_ALLIANCE",
 	"CHAT_MSG_BG_SYSTEM_NEUTRAL",
-	"ARENA_OPPONENT_UPDATE",
+	--"ARENA_OPPONENT_UPDATE",
 }
 local eventCategories = {
 	PLAYER_REGEN_DISABLED = "COMBAT",

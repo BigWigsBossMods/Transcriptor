@@ -1,4 +1,4 @@
-## Interface: 90005
+## Interface: 20501
 ## Title: Transcriptor
 ## Notes: Logging utility for boss encounters.
 ## Notes-zhCN: 战斗纪录器
