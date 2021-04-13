@@ -1,9 +1,9 @@
-name: Package addon
+name: Package Classic-BC addon
 
 on:
   push:
     branches:
-      - master
+      - classic-bc
     tags:
       - '*'
     paths-ignore:
